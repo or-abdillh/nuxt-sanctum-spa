@@ -11,12 +11,18 @@
                 <div class="form--wrapper">
                     <label class="form--label" for="email">Email</label>
                     <input v-model="form.email" class="form--input" type="email" name="email" id="email" required placeholder="Type your email here" autocomplete="off">
+
+                    <!-- error -->
+                    <small class="text-red-500" v-if="formError?.email">{{ formError.email.join(' ') }}</small>
                 </div>
 
                 <!-- password -->
                 <div class="form--wrapper">
                     <label class="form--label" for="password">Password</label>
                     <input v-model="form.password" class="form--input" type="password" name="password" id="password" required placeholder="Type your username here" autocomplete="off">
+
+                    <!-- error -->
+                    <small class="text-red-500" v-if="formError?.password">{{ formError.password.join(' ') }}</small>
                 </div>
 
                 <!-- action -->
@@ -33,7 +39,6 @@
 
 // composables
 const app = useNuxtApp()
-const router = useRouter()
 const auth = useAuthStore()
 
 // types
@@ -51,6 +56,9 @@ const form: Ref<Form> = ref({
 // DOM Element
 const button = ref<HTMLButtonElement | null>(null)
 
+// error
+const formError = ref<any>(null)
+
 // use notyf
 const notyfError = app.$notyfError as any
 const notyfSuccess = app.$notyfSuccess as any
@@ -62,11 +70,10 @@ const handleLogin = async () => {
   button.value!.innerText = 'Loading ...'
 
   const { error } = await auth.login(form.value)
-  await auth.userProfile()
 
-  if (error.value) {
+  if (error?.value) {
+    formError.value = error.value.data.errors
     console.log(error)
-    notyfError(error.value)
   } else {
     notyfSuccess('Login berhasil!')
     navigateTo('/')

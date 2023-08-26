@@ -15,27 +15,38 @@ type RequestLoginBody = {
 export const useAuthStore = defineStore('auth-store', () => {
 
   // initial state
-  const user: Ref<User | any> = ref({})
+  const user: Ref<User | null> = ref(null)
 
-  // get csrf cookie
-  async function csrfCookie() {
-    await useFetchApi('/sanctum/csrf-cookie', { method: 'get' })
-  }
+  // getters
+  const isAuthentticated = computed(() => !!user.value)
 
   // user login handler
   async function login(payload: RequestLoginBody) {
-    // get cookie first
-    await csrfCookie()
-    return await useFetchApi('/login', { body: payload, method: 'post' })
+
+    await useFetchApi('/sanctum/csrf-cookie', { method: 'get' })
+
+    const login = await useFetchApi('/login', { body: payload, method: 'post' })
+
+    await fetchUser()
+
+    return login
   }
 
   // user logged in
-  async function userProfile() {
-    const { data } = await useFetchApi('/api/user', { method: 'get' })
-    user.value = data?.value ?? {}
+  async function fetchUser() {
+    const userFetched = await useFetchApi('/api/user', { method: 'get' })
+    user.value = userFetched.data?.value ?? null
+
+    return userFetched
   }
 
   return {
-    user, login, userProfile
+    user, login, fetchUser, isAuthentticated
   }
+}, {
+  persist: {
+    storage: persistedState.cookiesWithOptions({
+      sameSite: 'lax',
+    })
+  },
 })

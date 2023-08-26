@@ -29,6 +29,7 @@ export function useFetchApi(url: string, options: any = {}) {
   return useFetch(url, {
     credentials: 'include',
     baseURL: BASE_URL,
+    watch: false,
     headers,
     ...options
   })
