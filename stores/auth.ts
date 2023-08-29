@@ -12,6 +12,8 @@ type RequestLoginBody = {
   password: string
 }
 
+const encryptStorage = useEncryptStorage
+
 export const useAuthStore = defineStore('auth-store', () => {
 
   // initial state
@@ -40,13 +42,19 @@ export const useAuthStore = defineStore('auth-store', () => {
     return userFetched
   }
 
+  // destroy session
+  function destroy() {
+
+    user.value = null
+  }
+
   return {
-    user, login, fetchUser, isAuthentticated
+    user, login, fetchUser, isAuthentticated, destroy
   }
 }, {
   persist: {
     storage: persistedState.cookiesWithOptions({
       sameSite: 'lax',
     })
-  },
+  }
 })

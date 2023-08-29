@@ -49,7 +49,8 @@ export default defineNuxtConfig({
   },
   runtimeConfig: {
     public: {
-      backendBaseUrl: ''
+      backendBaseUrl: '',
+      storageKey: ''
     }
   }
 })

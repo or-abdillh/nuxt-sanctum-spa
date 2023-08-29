@@ -20,6 +20,7 @@
   },
   "dependencies": {
     "@pinia/nuxt": "^0.4.11",
+    "encrypt-storage": "^2.12.16",
     "notyf": "^3.10.0",
     "pinia": "^2.1.6"
   },
